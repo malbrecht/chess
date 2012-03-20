@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"github.com/malbrecht/chess"
 	"log"
 )
 
@@ -8,7 +9,7 @@ func ExampleEngine() {
 	var e Engine
 	defer e.Quit()
 
-	e.SetPosition("")
+	e.SetPosition(chess.MustParseFen(""))
 	for info := range e.SearchDepth(6) {
 		if err := info.Err(); err != nil {
 			log.Fatal(err)
