@@ -36,8 +36,8 @@ func (b *Board) ParseMove(s string) (Move, error) {
 		piece     = NoPiece
 		promotion = NoPiece
 		castle    = -1
+		err       = errors.New("invalid move")
 	)
-	err := errors.New("invalid move")
 
 	if len(s) < 2 {
 		return NullMove, err
