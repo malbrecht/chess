@@ -1,3 +1,5 @@
+// package engine defines a generic interface for communicating with chess
+// engines.
 package engine
 
 import (
