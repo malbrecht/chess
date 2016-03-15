@@ -1,5 +1,7 @@
 package chess
 
+import "sort"
+
 type movegen struct {
 	*Board
 	moves []Move
@@ -11,11 +13,28 @@ func (b *Board) LegalMoves() []Move {
 	j := 0
 	for i := 0; i < len(moves); i++ {
 		if moves[i].isLegal(b) {
-			moves[i] = moves[j]
+			moves[j] = moves[i]
 			j++
 		}
 	}
-	return moves[:j]
+	moves = moves[:j]
+	sort.Sort(moveList(moves))
+	return moves
+}
+
+// Some ordering on moves to have LegalMoves return moves in a fixed order.
+type moveList []Move
+
+func (l moveList) Len() int      { return len(l) }
+func (l moveList) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
+func (l moveList) Less(i, j int) bool {
+	if l[i].From < l[j].From {
+		return true
+	}
+	if l[i].To < l[j].To {
+		return true
+	}
+	return l[i].Promotion > l[j].Promotion
 }
 
 // pseudoLegalMoves returns the list of "pseudo-legal" moves in the current

@@ -166,3 +166,52 @@ func TestParseMove(t *testing.T) {
 		}
 	}
 }
+
+// LegalMoves
+
+type movegenTest struct {
+	board *Board
+	moves []string
+}
+
+var movegenTests = []movegenTest{
+	{
+		board: &Board{
+			// white knight is pinned
+			// short castles prevented by black bishop
+			Piece: pieceArray(
+				BR, __, __, __, __, __, __, BK,
+				__, WP, __, __, __, __, BP, BP,
+				__, __, __, __, __, __, __, __,
+				__, __, BP, WP, BR, __, __, __,
+				__, __, __, BB, __, __, __, __,
+				__, __, __, WQ, __, __, __, __,
+				WP, __, __, __, WN, __, __, __,
+				WR, __, __, __, WK, __, __, WR,
+			),
+			SideToMove: White,
+			MoveNr:     1,
+			EpSquare:   C6,
+			CastleSq:   [4]Sq{A1, NoSquare, H1, NoSquare}},
+		moves: []string{
+			"Rb1", "Rc1", "Rd1", "O-O-O", "Kd1", "Kf1", "Rf1", "Rg1", "Kd2",
+			"Qb1", "Rh3", "Rh4", "Rh5", "Rh6", "Rxh7+", "a3", "a4", "Qd1",
+			"Rh2", "Qc2", "Qd2", "Qa3", "Qb3", "Qc3", "Qe3", "Qf3", "Qg3",
+			"Qh3", "Qc4", "Qxd4", "Qe4", "Qb5", "Qf5", "Qa6", "Qg6", "dxc6",
+			"d6", "Qxh7#", "bxa8=Q+", "b8=Q+", "bxa8=R+", "b8=R+", "bxa8=B",
+			"b8=B", "bxa8=N", "b8=N",
+		},
+	},
+}
+
+func TestMovegen(t *testing.T) {
+	for i, test := range movegenTests {
+		var moves []string
+		for _, move := range test.board.LegalMoves() {
+			moves = append(moves, move.San(test.board))
+		}
+		if !reflect.DeepEqual(moves, test.moves) {
+			t.Errorf("test %d failed:\n\twant %v\n\thave %v", i, test.moves, moves)
+		}
+	}
+}
