@@ -1,8 +1,7 @@
 Chess is a set of Go packages containing chess and chess960 related
 functionality.
 
-Documentation at GoPkgDoc:
-http://gopkgdoc.appspot.com/pkg/github.com/malbrecht/chess
+Documentation: https://godoc.org/github.com/malbrecht/chess
 
 Installation:
 
