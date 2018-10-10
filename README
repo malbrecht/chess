@@ -1,0 +1,8 @@
+Chess is a set of Go packages containing chess and chess960 related
+functionality.
+
+Documentation: https://godoc.org/github.com/jonpchin/chess
+
+Installation:
+
+	$ go get github.com/jonpchin/chess
