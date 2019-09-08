@@ -130,6 +130,11 @@ func (b *Board) ParseMove(s string) (Move, error) {
 	return move, nil
 }
 
+// San returns the move in Universal Chess Interface Notation.
+func (m Move) Uci(b *Board) string {
+	return m.interfaceNotation(b, PieceLetters)
+}
+
 // San returns the move in Standard Algebraic Notation.
 func (m Move) San(b *Board) string {
 	return m.algebraicNotation(b, PieceLetters)
@@ -138,6 +143,21 @@ func (m Move) San(b *Board) string {
 // Fan is like San but uses figurines.
 func (m Move) Fan(b *Board) string {
 	return m.algebraicNotation(b, Figurines)
+}
+
+func (m Move) interfaceNotation(b *Board, pieceLetters []rune) string {
+	if m == NullMove {
+		return "0000"
+	}
+	var buf bytes.Buffer
+	buf.WriteRune(rune('a' + m.From.File()))
+	buf.WriteRune(rune('1' + m.From.Rank()))
+	buf.WriteRune(rune('a' + m.To.File()))
+	buf.WriteRune(rune('1' + m.To.Rank()))
+	if m.Promotion != NoPiece {
+		buf.WriteRune(pieceLetters[m.Promotion.Type()])
+	}
+	return buf.String()
 }
 
 func (m Move) algebraicNotation(b *Board, pieceLetters []rune) string {
