@@ -2,9 +2,9 @@
 package chess
 
 import (
-	"bytes"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -297,7 +297,7 @@ func ParseFen(fen string) (b *Board, err error) {
 
 // Fen returns the FEN string (Forsyth-Edwards Notation) of the position.
 func (b *Board) Fen() string {
-	var fen bytes.Buffer
+	var fen strings.Builder
 
 	// field 1: pieces
 	for rank := 7; ; rank-- {

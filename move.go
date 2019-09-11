@@ -1,7 +1,6 @@
 package chess
 
 import (
-	"bytes"
 	"errors"
 	"strings"
 )
@@ -130,9 +129,22 @@ func (b *Board) ParseMove(s string) (Move, error) {
 	return move, nil
 }
 
-// San returns the move in Universal Chess Interface Notation.
+// Uci returns the move in Universal Chess Interface notation (b1c3, f7f8q).
+// For chess960 compatibility, castling is written as king-takes-own-rook
+// (e1h1) rather than king-moves-two-squares (e1g1).
 func (m Move) Uci(b *Board) string {
-	return m.interfaceNotation(b, PieceLetters)
+	if m == NullMove {
+		return "0000"
+	}
+	var buf strings.Builder
+	buf.WriteRune(rune('a' + m.From.File()))
+	buf.WriteRune(rune('1' + m.From.Rank()))
+	buf.WriteRune(rune('a' + m.To.File()))
+	buf.WriteRune(rune('1' + m.To.Rank()))
+	if m.Promotion != NoPiece {
+		buf.WriteRune(PieceLetters[Black|m.Promotion.Type()])
+	}
+	return buf.String()
 }
 
 // San returns the move in Standard Algebraic Notation.
@@ -145,26 +157,11 @@ func (m Move) Fan(b *Board) string {
 	return m.algebraicNotation(b, Figurines)
 }
 
-func (m Move) interfaceNotation(b *Board, pieceLetters []rune) string {
-	if m == NullMove {
-		return "0000"
-	}
-	var buf bytes.Buffer
-	buf.WriteRune(rune('a' + m.From.File()))
-	buf.WriteRune(rune('1' + m.From.Rank()))
-	buf.WriteRune(rune('a' + m.To.File()))
-	buf.WriteRune(rune('1' + m.To.Rank()))
-	if m.Promotion != NoPiece {
-		buf.WriteRune(pieceLetters[m.Promotion.Type()])
-	}
-	return buf.String()
-}
-
 func (m Move) algebraicNotation(b *Board, pieceLetters []rune) string {
 	if m == NullMove {
 		return "--"
 	}
-	var buf bytes.Buffer
+	var buf strings.Builder
 	switch piece := b.Piece[m.From].Type(); {
 	case piece == King && b.Piece[m.To] == b.my(Rook):
 		if m.From < m.To {
